@@ -29,11 +29,4 @@ jobs:
         mkdir sfdx
         tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components
         ./sfdx/install
-        displayName: CLI test
-    - bash: 
-        sfdx force:auth:jwt:grant --clientid $(salesforceProdClientid) --jwtkeyfile ./buildfiles/server.key --username $(salesforceProdUsername) --instanceurl $(salesforceProdInstanceUrl) -a prod
-      displayName: Authorize salesforce org
- 
-    - bash: 
-        sfdx force:source:deploy -u prod -p force-app/main/default
-      displayName: Deploy source code to Production
+        
