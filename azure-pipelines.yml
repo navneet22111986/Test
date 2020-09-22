@@ -23,18 +23,13 @@ pr:
 jobs:
 - job: ProdDeploy
   condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-  -bash:
-	sudo apt-get update  
-	sudo apt-get install default-jre  
-	sudo apt-get install default-jdk
-	displayName: JDk
-
-- bash:
-	wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
-	mkdir sfdx
-	tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components 1
-	./sfdx/install
-	displayName: CLI test
+  steps:
+    - bash:
+         wget https://developer.salesforce.com/media/salesforce-cli/sfdx-linux-amd64.tar.xz
+        mkdir sfdx
+        tar xJf sfdx-linux-amd64.tar.xz -C sfdx --strip-components
+        ./sfdx/install
+        displayName: CLI test
     - bash: 
         sfdx force:auth:jwt:grant --clientid $(salesforceProdClientid) --jwtkeyfile ./buildfiles/server.key --username $(salesforceProdUsername) --instanceurl $(salesforceProdInstanceUrl) -a prod
       displayName: Authorize salesforce org
