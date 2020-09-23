@@ -1,0 +1,56 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+  batch: "true"
+  branches:
+    include:
+      - master
+     
+  paths:
+    exclude:
+      - README.md
+      - azure-pipelines.yml
+pr:
+  autoCancel: "true"
+  branches:
+    include:
+      - master
+     
+  paths:
+    exclude:
+      - README.md
+jobs:
+- job: ProdDeploy
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  steps:
+    - task: UseNode@1
+    - bash: 
+        npm install -g sfdx-cli@7.45.1
+      displayName: Install Salesforce CLI
+    - bash: 
+        sfdx force:auth:jwt:grant --clientid $(salesforceProdClientid) --jwtkeyfile ./buildfiles/server.key --username $(salesforceProdUsername) --instanceurl $(salesforceProdInstanceUrl) -a prod
+      displayName: Authorize salesforce org
+    
+    - bash: 
+        sfdx force:source:deploy -u prod -p force-app/main/default
+      displayName: Deploy source code to Production
+
+- job: ProdDeployVlocity
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+  steps:
+    - task: UseNode@1
+    - bash: 
+        npm install --global vlocity@1.9.1
+      displayName: Install Vlocity BT
+    - bash: 
+        sfdx force:auth:jwt:grant --clientid $(salesforceProdClientid) --jwtkeyfile ./buildfiles/server.key --username $(salesforceProdUsername) --instanceurl $(salesforceProdInstanceUrl) -a prod
+      displayName: Authorize salesforce org
+    
+    - bash: 
+        vlocity -sfdx.username sit -job ./Deltadrop_prod.yaml packDeploy
+      displayName: Deploy source code to Production Vlocity
+
+
