@@ -1,5 +1,7 @@
-public class CaseManager1 {
 
+public class CaseManager {
+List<Account> accs = new List<Account>
+//TagTestaftertagcreation
 //Demo1checkbackmergetestworking
 //ytest
 //ztest
@@ -8,4 +10,5 @@ public class CaseManager1 {
 //CI Pipeline Test 2
   //trylastttt
   //hceckthisout
+  //TestBackmerg
 }
